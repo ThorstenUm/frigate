@@ -867,7 +867,7 @@ export function CameraGroupEdit({
                 <FormDescription>{t("group.cameras.desc")}</FormDescription>
                 <FormMessage />
                 {[
-                  ...(birdseyeConfig?.enabled && hasFullCameraAccess
+                  ...(birdseyeConfig?.enabled
                     ? ["birdseye"]
                     : []),
                   ...Object.keys(config?.cameras ?? {})
