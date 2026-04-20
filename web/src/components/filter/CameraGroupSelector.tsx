@@ -125,14 +125,14 @@ export function CameraGroupSelector({ className }: CameraGroupSelectorProps) {
 
     // If custom role, filter out groups where user has no accessible cameras
     if (!isAdmin) {
-      return allGroups
-        .filter(([, groupConfig]) => {
-          // Check if user has access to at least one camera in this group
-          return groupConfig.cameras.some((cameraName) =>
-            allowedCameras.includes(cameraName),
-          );
-        })
-        .sort((a, b) => a[1].order - b[1].order);
+		return allGroups
+		  .filter(([, groupConfig]) => {
+			return groupConfig.cameras.some(
+			  (cameraName) =>
+				allowedCameras.includes(cameraName) || cameraName === "birdseye",
+			);
+		  })
+		  .sort((a, b) => a[1].order - b[1].order);
     }
 
     return allGroups.sort((a, b) => a[1].order - b[1].order);
