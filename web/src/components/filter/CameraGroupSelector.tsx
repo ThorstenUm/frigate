@@ -77,7 +77,6 @@ import { useStreamingSettings } from "@/context/streaming-settings-provider";
 import { Trans, useTranslation } from "react-i18next";
 import { CameraNameLabel } from "../camera/FriendlyNameLabel";
 import { useAllowedCameras } from "@/hooks/use-allowed-cameras";
-import { useHasFullCameraAccess } from "@/hooks/use-has-full-camera-access";
 import { useIsAdmin } from "@/hooks/use-is-admin";
 import { useUserPersistedOverlayState } from "@/hooks/use-overlay-state";
 
