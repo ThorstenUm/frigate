@@ -77,6 +77,7 @@ import { useStreamingSettings } from "@/context/streaming-settings-provider";
 import { Trans, useTranslation } from "react-i18next";
 import { CameraNameLabel } from "../camera/FriendlyNameLabel";
 import { useAllowedCameras } from "@/hooks/use-allowed-cameras";
+import { useHasFullCameraAccess } from "@/hooks/use-has-full-camera-access";
 import { useIsAdmin } from "@/hooks/use-is-admin";
 import { useUserPersistedOverlayState } from "@/hooks/use-overlay-state";
 
@@ -88,6 +89,7 @@ export function CameraGroupSelector({ className }: CameraGroupSelectorProps) {
   const { t } = useTranslation(["components/camera"]);
   const { data: config } = useSWR<FrigateConfig>("config");
   const allowedCameras = useAllowedCameras();
+  const hasFullCameraAccess = useHasFullCameraAccess();
   const isAdmin = useIsAdmin();
 
   // tooltip
@@ -124,19 +126,19 @@ export function CameraGroupSelector({ className }: CameraGroupSelectorProps) {
     const allGroups = Object.entries(config.camera_groups);
 
     // If custom role, filter out groups where user has no accessible cameras
-    if (!isAdmin) {
-		return allGroups
-		  .filter(([, groupConfig]) => {
-			return groupConfig.cameras.some(
-			  (cameraName) =>
-				allowedCameras.includes(cameraName) || cameraName === "birdseye",
-			);
-		  })
-		  .sort((a, b) => a[1].order - b[1].order);
+    if (!hasFullCameraAccess) {
+      return allGroups
+        .filter(([, groupConfig]) => {
+          // Check if user has access to at least one camera in this group
+          return groupConfig.cameras.some((cameraName) =>
+            allowedCameras.includes(cameraName),
+          );
+        })
+        .sort((a, b) => a[1].order - b[1].order);
     }
 
     return allGroups.sort((a, b) => a[1].order - b[1].order);
-  }, [config, allowedCameras, isAdmin]);
+  }, [config, allowedCameras, hasFullCameraAccess]);
 
   // add group
 
@@ -677,6 +679,7 @@ export function CameraGroupEdit({
     );
 
   const allowedCameras = useAllowedCameras();
+  const hasFullCameraAccess = useHasFullCameraAccess();
 
   const [openCamera, setOpenCamera] = useState<string | null>();
 
@@ -865,7 +868,7 @@ export function CameraGroupEdit({
                 <FormDescription>{t("group.cameras.desc")}</FormDescription>
                 <FormMessage />
                 {[
-                  ...(birdseyeConfig?.enabled
+                  ...(birdseyeConfig?.enabled && hasFullCameraAccess
                     ? ["birdseye"]
                     : []),
                   ...Object.keys(config?.cameras ?? {})
