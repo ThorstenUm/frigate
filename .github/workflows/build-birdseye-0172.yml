@@ -12,37 +12,9 @@ permissions:
   packages: write
 
 jobs:
-  build_standard:
-    runs-on: ubuntu-22.04
-    name: Build standard amd64 image
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-
-      - name: Set up QEMU and Buildx
-        uses: ./.github/actions/setup
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push standard image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: docker/main/Dockerfile
-          push: true
-          platforms: linux/amd64
-          target: frigate
-          tags: ghcr.io/thorstenum/frigate:0.17.2
-          cache-from: type=registry,ref=ghcr.io/thorstenum/frigate:cache-amd64
-          cache-to: type=registry,ref=ghcr.io/thorstenum/frigate:cache-amd64,mode=max
-
   build_tensorrt:
     runs-on: ubuntu-22.04
     name: Build TensorRT amd64 image
-    needs:
-      - build_standard
     steps:
       - name: Check out code
         uses: actions/checkout@v6
