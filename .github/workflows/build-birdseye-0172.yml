@@ -65,5 +65,3 @@ jobs:
           files: docker/tensorrt/trt.hcl
           set: |
             tensorrt.tags=ghcr.io/thorstenum/frigate:0.17.2-tensorrt
-            *.cache-from=type=registry,ref=ghcr.io/thorstenum/frigate:cache-tensorrt
-            *.cache-to=type=registry,ref=ghcr.io/thorstenum/frigate:cache-tensorrt,mode=max
