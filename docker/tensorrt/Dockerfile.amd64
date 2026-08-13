@@ -25,6 +25,11 @@ RUN --mount=type=bind,from=trt-wheels,source=/trt-wheels,target=/deps/trt-wheels
     && pip3 install -U /deps/trt-wheels/*.whl
 
 COPY --from=rootfs / /
+
+# Temporary workaround for RTX 50 / Blackwell on Frigate 0.17.2:
+# disable CUDA Graphs only in the TensorRT image.
+RUN sed -i 's/"enable_cuda_graph": True/"enable_cuda_graph": False/' \
+    /opt/frigate/frigate/detectors/detection_runners.py
 COPY docker/tensorrt/detector/rootfs/etc/ld.so.conf.d /etc/ld.so.conf.d
 RUN ldconfig
 
